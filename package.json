@@ -1,0 +1,22 @@
+{
+  "name": "financial-management-and-transaction-system-api",
+  "version": "1.0.0",
+  "description": "Banking Management System",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaiduDev/Financial-Management-Transaction-System-Backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SaiduDev/Financial-Management-Transaction-System-Backend/issues"
+  },
+  "homepage": "https://github.com/SaiduDev/Financial-Management-Transaction-System-Backend#readme"
+}
