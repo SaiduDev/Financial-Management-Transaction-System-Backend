@@ -18,5 +18,14 @@
   "bugs": {
     "url": "https://github.com/SaiduDev/Financial-Management-Transaction-System-Backend/issues"
   },
-  "homepage": "https://github.com/SaiduDev/Financial-Management-Transaction-System-Backend#readme"
+  "homepage": "https://github.com/SaiduDev/Financial-Management-Transaction-System-Backend#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.0"
+  }
 }
