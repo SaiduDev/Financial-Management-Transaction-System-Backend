@@ -19,7 +19,7 @@ export const authVerify = (req, res, next)=>{
 
         next();
     } catch (error) {
-        res.status(500).json({message: "Token Expired, please login again"});
+        res.status(500).json({message: "failed to verify Token, please login again"});
         console.error(error);
     }
 }
