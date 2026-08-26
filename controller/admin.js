@@ -16,7 +16,7 @@ export const adminSignUp = async(req, res) => {
         }
 
         let hashedPassword = await bcrypt.hash(password, 10);
-
+        
         let newAdmin = await pool.query("INSERT INTO admin ( fullname, email, password ) VALUES($1, $2, $3) RETURNING *", [fullname, email, hashedPassword]);
 
         let token = jwt.sign(
