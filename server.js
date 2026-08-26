@@ -14,6 +14,11 @@ try {
 
     app.use("/transaction", adminRouter);
     
+    let port = process.env.PORT || 8080;
+
+    app.listen(port, ()=>{
+        console.log(`server running on ${port}`);
+    })
 } catch (error) {
     
 }

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import pool from "../config/db.js";
-import { getAdminByEmail, adminProfile } from "../queries/query.js";
+import { getAdminByEmail, getAdminProfile } from "../queries/query.js";
 
 dotenv.config();
 
@@ -79,7 +79,7 @@ export const adminProfile = async (req, res) => {
     try {
         let adminId = req.user.id;
 
-        let profile = await pool.query(adminProfile, adminId);
+        let profile = await pool.query(getAdminProfile, adminId);
 
         res.status(201).json(profile.rows[0]);
         

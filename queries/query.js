@@ -6,4 +6,4 @@ export const getAdminByEmail = "SELECT * FROM admin WHERE email = $1";
 export const getCustomerByEmail = "SELECT * FROM customers WHERE email = $1";
 
 // get admin profile
-export const adminProfile = "SELECT fullname, email, role FROM admin WHERE id = $1";
+export const getAdminProfile = "SELECT fullname, email, role FROM admin WHERE id = $1";
