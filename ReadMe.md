@@ -94,3 +94,54 @@ ADMIN
 ```
 
 For the first version, **3 roles are enough**. We can introduce `TELLER`, `MANAGER`, and `AUDITOR` later when we implement more advanced RBAC.
+
+
+
+create table admin(
+id serial primary key,
+fullname varchar(255) not null,
+email varchar(100) not null,
+password text not null,
+role varchar(255) not null default 'admin',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table employees(
+id serial primary key,
+fullname varchar(255) not null,
+email varchar(100) not null,
+password text not null,
+role varchar(255) not null default 'employee',
+employee_id integer not null unique,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table customers(
+id serial primary key,
+fullname varchar(255) not null,
+email varchar(100) not null,
+password text not null,
+customer_id integer not null ,
+nationality varchar(255) not null,
+role varchar(255) not null default 'customer',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table bank_accounts(
+id serial primary key,
+bank_account_number varchar(255) not null,
+password TEXT not null,
+customer_id integer REFERENCES customers(customer_id),
+account_balance varchar(255) not null,
+status varchar(255) not null,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table transactions(
+id serial primary key,
+transaction_id varchar(255) not null,
+type varchar(100) not null,
+employee_id integer REFERENCES employees(employee_id),
+amount varchar(255) not null,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
