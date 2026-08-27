@@ -20,5 +20,5 @@ try {
         console.log(`server running on ${port}`);
     })
 } catch (error) {
-    
+    console.error(error);
 }
