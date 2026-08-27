@@ -15,7 +15,7 @@ export const authVerify = (req, res, next)=>{
 
         let decoded = jwt.verify(token, process.env.JWT_Secret);
 
-        req.user = decode;
+        req.user = decoded;
 
         next();
     } catch (error) {

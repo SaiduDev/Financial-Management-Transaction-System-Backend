@@ -19,9 +19,10 @@ export const adminSignUp = async(req, res) => {
         let hashedPassword = await bcrypt.hash(password, 10);
 
         let newAdmin = await pool.query("INSERT INTO admin ( fullname, email, password ) VALUES($1, $2, $3) RETURNING *", [fullname, email, hashedPassword]);
-
+         
+        let admin = newAdmin.rows[0];
         let token = jwt.sign(
-            {id: newAdmin[0].id, role: newAdmin[0].role},
+            {id: admin.id, role: admin.role},
             process.env.JWT_Secret,
             {expiresIn: "4h"}
         );
@@ -79,7 +80,7 @@ export const adminProfile = async (req, res) => {
     try {
         let adminId = req.user.id;
 
-        let profile = await pool.query(getAdminProfile, adminId);
+        let profile = await pool.query(getAdminProfile, [adminId]);
 
         res.status(201).json(profile.rows[0]);
         
@@ -90,12 +91,14 @@ export const adminProfile = async (req, res) => {
     }
 }
 
+
+
 export const changePassword = async (req, res) => {
     try {
 
         let {current_password, newPassword} = req.body;
 
-        let admin = await pool.query("SELECT * FROM admin WHERE id = $1", req.user.id);
+        let admin = await pool.query("SELECT * FROM admin WHERE id = $1", [req.user.id]);
 
         let comparePassword = await bcrypt.compare(current_password, admin.rows[0].password);
 
@@ -105,7 +108,7 @@ export const changePassword = async (req, res) => {
 
         let hashedPassword = await bcrypt.hash(newPassword, 12);
 
-        let updatedPassword = await pool.query("UPDATE admin SET password = $1 WHERE id = $1 RETURNING *", [hashedPassword, req.user.id]);
+        let updatedPassword = await pool.query("UPDATE admin SET password = $1 WHERE id = $2 RETURNING *", [hashedPassword, req.user.id]);
 
         res.status(201).json({message: "password changed successfully"});
 

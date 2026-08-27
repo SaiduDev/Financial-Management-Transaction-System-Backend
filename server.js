@@ -12,7 +12,7 @@ try {
     app.use(cors());
     app.use(express.json({limit: "10kb"}));
 
-    app.use("/transaction", adminRouter);
+    app.use("/api/transaction", adminRouter);
     
     let port = process.env.PORT || 8080;
 

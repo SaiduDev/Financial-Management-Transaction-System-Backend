@@ -1,12 +1,14 @@
 import express from "express";
-import { adminLogIn, adminSignUp } from "../controller/admin.js";
+import { adminLogIn, adminSignUp, adminProfile, changePassword } from "../controller/admin.js";
 import { authVerify } from "../middleware/authentication.js";
 import { authorize } from "../middleware/authorization.js";
 
 const adminRouter  = express.Router();
 
+adminRouter.get("/admin/profile", authVerify, authorize("admin"), adminProfile);
 adminRouter.post("/auth/admin/signUp", adminSignUp);
 adminRouter.post("/auth/admin/logIn", adminLogIn);
+adminRouter.post("/admin/changePassword", authVerify, authorize("admin"), changePassword);
 
 
 export default adminRouter;
