@@ -1,6 +1,6 @@
 import rateLimit from "express-rate-limit";
 
-export let loginRateLimiter = rateLimit({
+let loginRateLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
     max: 5,
     success: {
@@ -8,3 +8,5 @@ export let loginRateLimiter = rateLimit({
         message: " Too many attempt, please try again in 15 minutes"
     }
 });
+
+export default loginRateLimiter
