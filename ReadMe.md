@@ -121,7 +121,6 @@ id serial primary key,
 fullname varchar(255) not null,
 email varchar(100) not null,
 password text not null,
-customer_id integer not null ,
 nationality varchar(255) not null,
 role varchar(255) not null default 'customer',
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -131,7 +130,7 @@ create table bank_accounts(
 id serial primary key,
 bank_account_number varchar(255) not null,
 password TEXT not null,
-customer_id integer REFERENCES customers(customer_id),
+customer_id integer REFERENCES customers(id),
 account_balance varchar(255) not null,
 status varchar(255) not null,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
