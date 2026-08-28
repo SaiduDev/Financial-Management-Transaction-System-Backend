@@ -21,7 +21,7 @@ export const signUpCustomer = async (req, res) => {
 
 
         let token = jwt.sign(
-            {id: newCustomer.rows[0].id, role : newCustomer.rows[0].role },
+            {id: newCustomer.rows[0].id, role: newCustomer.rows[0].role },
             process.env.JWT_Secret,
             {expiresIn: "9h"}
         );
