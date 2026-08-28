@@ -2,7 +2,7 @@ import pool from "../config/db.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-
+import crypto from "crypto";
 dotenv.config();
 
 export const signUpCustomer = async (req, res) => {
@@ -68,7 +68,52 @@ export const loginCustomer = async (req, res) => {
             token
         });
     } catch (error) {
-         res.status(500).json({message: "failed to register user", error});
+         res.status(500).json({message: "failed to login user", error});
+        console.error(error);
+    }
+}
+
+
+export let customerProfile = async (req, res) => {
+    
+    try {
+        let user_id = req.user.id;
+
+        let profile = await pool.query("SELECT fullname, email, role FROM customers WHERE id = $1", [user_id] );
+
+        res.status(200).json(profile.rows[0]);
+        
+    } catch (error) {
+          res.status(500).json({message: "failed to load user profile", error});
+        console.error(error);
+    }
+}
+
+
+export const ApplyForBankAccount = async (req, res) => {
+    try {
+        let customer_id = req.user.id;
+        let account_number = crypto.randomInt(1000000000, 9999999999).toString();
+
+        let { password, account_type } = req.body;
+        
+        let checkUser = await pool.query("SELECT * FROM accounts WHERE customer_id = $1", [customer_id]);
+
+        if(checkUser.rows.length >= 1){
+            return res.status(409).json({message: "Customer already created account"});
+        }
+
+        let hashedPassword = await bcrypt.hash(password, 12);
+
+        let newAccount = await pool.query("INSERT INTO accounts (customer_id, account_number, password, account_type) VALUES($1, $2, $3, $4) RETURNING * ", [customer_id, account_number, hashedPassword, account_type]);  
+
+
+
+        res.status(201).json({message: "Applied successfully, you will be notified once you account is approved."});
+
+
+    } catch (error) {
+        res.status(500).json({message: "failed to apply for bank account", error});
         console.error(error);
     }
 }

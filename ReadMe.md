@@ -126,15 +126,18 @@ role varchar(255) not null default 'customer',
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-create table bank_accounts(
+create table accounts(
 id serial primary key,
-bank_account_number varchar(255) not null,
-password TEXT not null,
 customer_id integer REFERENCES customers(id),
-account_balance varchar(255) not null,
-status varchar(255) not null,
+account_number varchar(10) not null unique,
+password TEXT not null,
+balance varchar(255) not null,
+accout_type varchar(20) NOT NULL,
+status varchar(255) not null default 'pending',
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
 
 create table transactions(
 id serial primary key,
