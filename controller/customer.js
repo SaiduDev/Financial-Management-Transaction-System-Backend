@@ -94,7 +94,6 @@ export const ApplyForBankAccount = async (req, res) => {
     try {
         let customer_id = req.user.id;
         let account_number = crypto.randomInt(1000000000, 9999999999).toString();
-
         let { password, account_type } = req.body;
         
         let checkUser = await pool.query("SELECT * FROM accounts WHERE customer_id = $1", [customer_id]);
@@ -105,6 +104,14 @@ export const ApplyForBankAccount = async (req, res) => {
 
         let hashedPassword = await bcrypt.hash(password, 12);
 
+        let checkAccountNumber = await pool.query("SELECT account_number FROM accounts WHERE account_number = $1", [account_number]);
+
+        if(checkAccountNumber.rows.length >= 1){
+            return res.status(409).json({message: "something went wrong please try again"});
+        }
+
+      
+
         let newAccount = await pool.query("INSERT INTO accounts (customer_id, account_number, password, account_type) VALUES($1, $2, $3, $4) RETURNING * ", [customer_id, account_number, hashedPassword, account_type]);  
 
 
@@ -114,6 +121,22 @@ export const ApplyForBankAccount = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({message: "failed to apply for bank account", error});
+        console.error(error);
+    }
+}
+
+
+export const checkAccountBalance = async (req, res) => {
+    try {
+        let id = req.user.id;
+
+        let balance = await pool.query("SELECT balance FROM accounts AS balance WHERE customer_id = $1", [id]);
+
+        res.status(201).json(balance.rows[0].balance);
+
+        
+    } catch (error) {
+        res.status(500).json({message: "failed to get Account Balance", error});
         console.error(error);
     }
 }
