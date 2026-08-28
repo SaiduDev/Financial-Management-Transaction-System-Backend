@@ -16,3 +16,15 @@ export const updateAdminPassword = "UPDATE admin SET password = $1 WHERE id = $2
 
 // register new admin
 export const registerNewAdmin = "INSERT INTO admin ( fullname, email, password ) VALUES($1, $2, $3) RETURNING *";
+
+// get employee by email
+export const employeeEmail = "SELECT * FROM employees WHERE email = $1";
+
+// get max emplyee id
+export const employeeId = "SELECT max(employee_id) AS max_employee FROM employees ";
+
+// get all employee profile
+export const allEMployees = "SELECT fullname , email , role , employee_id, created_at FROM employees ";
+
+// create new employee
+export const createNewEmployee = "INSERT INTO employees (fullname , email , password , employee_id) VALUES($1, $2, $3, $4) RETURNING *";

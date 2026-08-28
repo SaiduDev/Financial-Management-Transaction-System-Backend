@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import pool from "../config/db.js";
-import { getAdminByEmail, getAdminProfile, getAdminById, updateAdminPassword, registerNewAdmin } from "../queries/query.js";
+import { getAdminByEmail, getAdminProfile, getAdminById, updateAdminPassword, registerNewAdmin, employeeEmail, employeeId, allEMployees, createNewEmployee } from "../queries/query.js";
 
 dotenv.config();
 
@@ -118,5 +118,47 @@ export const changePassword = async (req, res) => {
     } catch (error) {
           res.status(500).json({message: "failed to change admin password", error: error.message});
         console.error(error);
+    }
+}
+
+export const registerNewEmployee = async (req, res) => {
+    try {
+        let { fullname , email , password , employee_id } = req.body;
+
+        let confirmEmail = await pool.query(employeeEmail, [email]);
+
+        if(confirmEmail.rows.length >= 1){
+            res.status(409).json({message: "Email already existed"});
+        }
+
+        let hashedPassword = await bcrypt.hash(password, 12);
+        let empId = await pool.query(employeeId);
+        
+        let newId ;
+
+        if(Number(empId.rows[0].max_employee) === 0 || null ){
+            newId = 23289;
+        }else{
+          newId =  Number(empId.rows[0].max_employee) + 1;
+            
+        }
+       
+        let newEmp = await pool.query(createNewEmployee, [fullname, email, hashedPassword, newId]);
+
+        res.status(201).json({message: "New Employee register"});
+    } catch (error) {
+        res.status(500).json({message: "failed to create new employee", error});
+        console.error(error.message);
+    }
+}
+
+export const getAllEmployees = async (req, res) => {
+    try {
+        let employees = await pool.query(allEMployees );
+
+        res.status(200).json(employees.rows);
+    } catch (error) {
+        console.error(error);
+        re.status(500).json({message: "failed to fetch admin", error});
     }
 }
