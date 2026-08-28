@@ -45,22 +45,38 @@ export const loginEmployees = async (req, res) => {
 
 export const empChangePassword = async (req, res) => {
     try {
-        let{current_password, newPassword} = req.body;
+        let{current_password, new_Password} = req.body;
         let user_id = req.user.id;
 
         let emp = await pool.query("SELECT * FROM employees WHERE id = $1", [user_id]);
         
         let checkCurrentPassword  = await bcrypt.compare(current_password, emp.rows[0].password);
 
+
         if(!checkCurrentPassword){
             return res.status(403).json({message: "current password is incorrect"});
         }
 
-        let newPassword = await pool.query("UPDATE employees SET password = $1 WHERE id = $1 RETURNING *", [newPassword, user_id]);
+        let hashedPassword = await bcrypt.hash(new_Password, 10);
+
+        let newPassword = await pool.query("UPDATE employees SET password = $1 WHERE id = $2 RETURNING *", [hashedPassword, user_id]);
 
         res.status(201).json({message: "Password changed"});
     } catch (error) {
         console.error(error);
         res.status(500).json({message: "something went wrong, failed to change password"});
+    }
+}
+
+export const empProfile = async (req, res) => {
+    try {
+        let userId = req.user.id;
+
+        let profile = await pool.query("SELECT  fullname , email , role , employee_id FROM employees WHERE id = $1",  [userId]);
+
+        res.status(201).json(profile.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: "something went wrong, failed to fetch profile"});
     }
 }

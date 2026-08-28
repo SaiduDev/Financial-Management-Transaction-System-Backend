@@ -3,6 +3,7 @@ import helmet from "helmet";
 import cors from "cors";
 import dotenv from "dotenv";
 import adminRouter from "./routes/adminRoute.js";
+import empRouter from "./routes/tellerRoute.js";
 
 dotenv.config();
 const app = express();
@@ -13,6 +14,7 @@ try {
     app.use(express.json({limit: "10kb"}));
 
     app.use("/api/transaction", adminRouter);
+    app.use("/api/transaction", empRouter)
     
     let port = process.env.PORT || 8080;
 
