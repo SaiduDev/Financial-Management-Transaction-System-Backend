@@ -140,3 +140,17 @@ export const checkAccountBalance = async (req, res) => {
         console.error(error);
     }
 }
+
+export const accountProfile = async (req, res) => {
+    try {
+        let id = req.user.id;
+
+        let accProfile = await pool.query("SELECT customer_id , account_number , balance , account_type, status FROM accounts WHERE customer_id = $1", [id]);
+
+        res.status(201).json(accProfile.rows[0]);
+
+    } catch (error) {
+        res.status(500).json({message: "failed to fetch account data"})
+        console.error(error);
+    }
+}

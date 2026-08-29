@@ -80,3 +80,23 @@ export const empProfile = async (req, res) => {
         res.status(500).json({message: "something went wrong, failed to fetch profile"});
     }
 }
+
+
+export const approveBankAccount  = async (req, res) => {
+    try {
+        let { id } = req.params;
+
+        if(!id){
+            return res.status(404).json({message: "No id provided"});
+        }
+
+        let approveAccount = await pool.query("UPDATE accounts SET status = 'active' WHERE id = $1 RETURNING *", [id]);
+
+
+        res.status(201).json({message: "Account Approved successfully"});
+        
+    } catch (error) {
+        res.status(500).json({message: "failed to approve account, something went wrong"});
+        console.error(error);
+    }
+}
