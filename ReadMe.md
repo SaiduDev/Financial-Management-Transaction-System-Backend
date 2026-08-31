@@ -1,4 +1,4 @@
-Banking Management System
+Finance and transaction Management System
 
 A backend-focused Banking Management System designed to simulate real-world banking operations. The system allows bank staff to manage customer accounts and perform financial transactions securely.
 
