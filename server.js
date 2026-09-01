@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import adminRouter from "./routes/adminRoute.js";
 import empRouter from "./routes/tellerRoute.js";
 import customerRouter from "./routes/customer.js";
+import transactionRouter from "./routes/transaction.js";
 
 
 dotenv.config();
@@ -18,6 +19,7 @@ try {
     app.use("/api/transaction", adminRouter);
     app.use("/api/transaction", empRouter);
     app.use("/api/transaction", customerRouter);
+    app.use("/api/transaction", transactionRouter);
     
     let port = process.env.PORT || 8080;
 

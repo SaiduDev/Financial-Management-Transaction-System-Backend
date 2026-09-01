@@ -94,7 +94,7 @@ export const ApplyForBankAccount = async (req, res) => {
     try {
         let customer_id = req.user.id;
         let account_number = crypto.randomInt(1000000000, 9999999999).toString();
-        let { password, account_type } = req.body;
+        let { password } = req.body;
         
         let checkUser = await pool.query("SELECT * FROM accounts WHERE customer_id = $1", [customer_id]);
 
@@ -112,7 +112,7 @@ export const ApplyForBankAccount = async (req, res) => {
 
       
 
-        let newAccount = await pool.query("INSERT INTO accounts (customer_id, account_number, password, account_type) VALUES($1, $2, $3, $4) RETURNING * ", [customer_id, account_number, hashedPassword, account_type]);  
+        let newAccount = await pool.query("INSERT INTO accounts (customer_id, account_number, password) VALUES($1, $2, $3) RETURNING * ", [customer_id, account_number, hashedPassword]);  
 
 
 
@@ -145,7 +145,7 @@ export const accountProfile = async (req, res) => {
     try {
         let id = req.user.id;
 
-        let accProfile = await pool.query("SELECT customer_id , account_number , balance , account_type, status FROM accounts WHERE customer_id = $1", [id]);
+        let accProfile = await pool.query("SELECT customer_id , account_number , account_balance , status FROM accounts WHERE customer_id = $1", [id]);
 
         res.status(201).json(accProfile.rows[0]);
 
