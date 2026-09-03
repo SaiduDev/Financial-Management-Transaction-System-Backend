@@ -16,20 +16,30 @@ export const sendMoney = async (req, res) => {
         let  sender = await pool.query("SELECT * FROM accounts WHERE account_number = $1 AND customer_id  = $2", [sender_number, userId]);
         let receiver = await pool.query("SELECT * FROM accounts WHERE account_number = $1", [receiver_number]);
 
-        
+        if(sender.rows.length === 0){
+            return res.status(404).json({message: "Sender Account not Found"});
+            await pool.query("ROLLBACK");
+
+        }
 
         if(sender.rows[0].account_balance < amount){
             return res.status(404).json({message: "failed to transfer money, insufficient balance ."});
+            await pool.query("ROLLBACK");
+
         }
 
         if(receiver.rows.length === 0 || receiver.rows[0].status != "active"){
             return res.status(404).json({message: "transaction failed, the receiver account is not active"});
+            await pool.query("ROLLBACK");
+
         }
 
         let checkPassword = await bcrypt.compare(password, sender.rows[0].password);
 
         if(!checkPassword){
             return res.status(403).json({message: "password is incorrect"});
+          await pool.query("ROLLBACK");
+
         }
 
         let transId = crypto.randomInt(1000000, 10000000000).toString();
