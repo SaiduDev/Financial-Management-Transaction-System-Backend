@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -97,6 +98,43 @@ export const approveBankAccount  = async (req, res) => {
         
     } catch (error) {
         res.status(500).json({message: "failed to approve account, something went wrong"});
+        console.error(error);
+    }
+}
+
+export const withdrawMoney = async (req, res) => {
+    try {
+        let id = req.user.id;
+
+        let { accNumber, amount,  password } = req.body;
+        await pool.query("BEGIN");
+
+        let checkAccount = await pool.query("SELECT * FROM accounts WHERE account_number = $1", [accNumber]);
+
+        
+
+        if(checkAccount.rows.length === 0){
+           return  res.status(404).json({message: "customer account not found"});
+        }
+
+         if(checkAccount.rows[0].account_balance < amount ){
+            return res.status(404).json({message: "insufficient balance to make this transaction"});
+        }
+
+        if(checkAccount.rows[0].status != "active"){
+            res.status(404).json({message: "This account is not active"});
+        }
+        
+        
+
+        await pool.query("UPDATE accounts SET account_balance = account_balance - $1 WHERE account_number = $2 RETURNING *");
+
+        await pool.query("commit");
+       
+    } catch (error) {
+        await pool.query("rollback");
+        res.status(500).json({message: "failed to withdraw money"});
+
         console.error(error);
     }
 }
