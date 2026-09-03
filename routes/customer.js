@@ -2,6 +2,7 @@ import express from "express";
 import { accountProfile, ApplyForBankAccount, checkAccountBalance, customerProfile, loginCustomer, signUpCustomer } from "../controller/customer.js";
 import { authVerify } from "../middleware/authentication.js";
 import { authorize } from "../middleware/authorization.js";
+import loginRateLimiter from "../middleware/rateLimiter.js";
 
 const customerRouter = express.Router();
 
@@ -10,7 +11,7 @@ try {
     customerRouter.get("/customer/accountBalance", authVerify, authorize("customer"), checkAccountBalance);
     customerRouter.get("/customer/profile", authVerify, authorize("customer"), customerProfile);
     customerRouter.post("/auth/customer/signUp", signUpCustomer );
-    customerRouter.post("/auth/customer/login", loginCustomer);
+    customerRouter.post("/auth/customer/login", loginRateLimiter, loginCustomer);
     customerRouter.post("/customer/accountApplication", authVerify, authorize("customer"), ApplyForBankAccount);
 
     

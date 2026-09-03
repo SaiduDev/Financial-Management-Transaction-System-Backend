@@ -8,7 +8,7 @@ export const authVerify = (req, res, next)=>{
         let authHeader = req.headers.authorization;
 
         if(!authHeader){
-            return res.status(404).json({message: "No Token provided"});
+            return res.status(401).json({message: "No Token provided"});
         }
 
         let token = authHeader.split(" ")[1];
