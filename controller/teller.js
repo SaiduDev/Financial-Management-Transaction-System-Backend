@@ -103,51 +103,59 @@ export const approveBankAccount  = async (req, res) => {
 }
 
 export const withdrawMoney = async (req, res) => {
+    const client = await pool.connect();
     try {
         let id = req.user.id;
 
         let { accNumber, amount,  password } = req.body;
-        await pool.query("BEGIN");
+        await client.query("BEGIN");
 
-        let checkAccount = await pool.query("SELECT * FROM accounts WHERE account_number = $1", [accNumber]);
+        let checkAccount = await client.query("SELECT * FROM accounts WHERE account_number = $1", [accNumber]);
 
         
 
         if(checkAccount.rows.length === 0){
+            await client.query("ROLLBACK");
+
            return  res.status(404).json({message: "customer account not found"});
-           await pool.query("ROLLBACK");
         }
 
          if(checkAccount.rows[0].account_balance < amount ){
+             await client.query("ROLLBACK");
+
             return res.status(404).json({message: "insufficient balance to make this transaction"});
-            await pool.query("ROLLBACK");
 
         }
 
         if(checkAccount.rows[0].status != "active"){
+            await client.query("ROLLBACK");
+
             return res.status(404).json({message: "This account is not active"});
-             await pool.query("ROLLBACK");
 
         }
 
         let comparePassword = await bcrypt.compare(password, checkAccount.rows[0].password);
 
         if(!comparePassword){
+              await client.query("ROLLBACK");
+
             return res.status(403).json({message: "password is incorrect"});
-             await pool.query("ROLLBACK");
 
         }
         
         
 
-        await pool.query("UPDATE accounts SET account_balance = account_balance - $1 WHERE account_number = $2 RETURNING *", [amount, accNumber]);
+        await client.query("UPDATE accounts SET account_balance = account_balance - $1 WHERE account_number = $2 RETURNING *", [amount, accNumber]);
 
-        await pool.query("commit");
+        await client.query("commit");
        
+        res.status(201).json({message:` successfully withdraw ${amount} from ${accNumber}.`})
     } catch (error) {
-        await pool.query("rollback");
+        await client.query("rollback");
         res.status(500).json({message: "failed to withdraw money"});
 
         console.error(error);
+    }finally {
+        await client.release();
     }
 }
